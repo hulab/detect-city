@@ -31,5 +31,5 @@ module.exports = function (query, onlyOne = false) {
       results.push(result);
     }
   }
-  return results;
+  return onlyOne ? results[0] : results;
 }
