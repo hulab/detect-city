@@ -2,13 +2,13 @@ const cities = require('all-the-cities')
 
 const clean = (text) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const citiesMap = cities.reduce((acc, city) => {
-  const set = new Set([clean(city.name), ...city.altName.map(alt => clean(alt).replace(/ *\[[^]*\] */g, "").replace(/[.,\/#!$%\^&\*;:{}=\-_`~(){}\[\]]/g,"").trim())]);
+  const set = new Set([clean(city.name), ...city.altName.map(alt => clean(alt).replace(/ *\[[^]*\] */g, "").replace(/[.,\/#!$%\^&\*;:{}=\-_`~(){}\[\]]/g," ").replace(/\s\s+/g, ' ').trim())]);
   acc.set(set, city);
   return acc;
 }, new Map());
 
 module.exports = function (query, onlyOne = false) {
-  const text = clean(query).replace(/[.,\/#!$%\^&\*;:{}=\-_`~(){}\[\]]/g,"");
+  const text = clean(query).replace(/[.,\/#!$%\^&\*;:{}=\-_`~(){}\[\]]/g," ").replace(/\s\s+/g, ' ');
   const words = text.split(/\s/);
 
   var results = []
