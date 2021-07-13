@@ -1,4 +1,5 @@
 const cities = require('all-the-cities')
+const countryCodes = require("./countryCodes.json");
 
 const clean = (text) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const citiesMap = cities.reduce((acc, city) => {
@@ -11,8 +12,8 @@ module.exports = function (query, onlyOne = false) {
   const text = clean(query).replace(/[.,\/#!$%\^&\*;:{}=\-_`~(){}\[\]]/g," ").replace(/\s\s+/g, ' ');
   const words = text.split(/\s/);
 
-  var results = []
-  for (var city of citiesMap.keys()) {
+  let results = []
+  for (let city of citiesMap.keys()) {
     if (city.has(text)) {
       const result = citiesMap.get(city);
       if (onlyOne) {
@@ -21,7 +22,7 @@ module.exports = function (query, onlyOne = false) {
       results.push(result);
     }
   }
-  for (var city of citiesMap.keys()) {
+  for (let city of citiesMap.keys()) {
     const match = words.some(w => city.has(w));
     if (match.length > 0) {
       const result = citiesMap.get(city);
@@ -31,5 +32,8 @@ module.exports = function (query, onlyOne = false) {
       results.push(result);
     }
   }
+  results = results.map(({country, ...rest}) => ({country: countryCodes.find(({ISO}) => ISO == country), ...rest}));
   return onlyOne ? results[0] : results;
 }
+
+// module.exports("amalfi")
