@@ -1,24 +1,22 @@
 const cities = require('all-the-cities')
 const countryCodes = require("./countryCodes.json");
 
-const clean = (text) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const clean = (text) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[.,\/#!$%\^&\*;:{}=\-_`~(){}\[\]]/g," ").replace(/\s\s+/g, ' ').trim().toLowerCase();
 const citiesMap = cities.reduce((acc, city) => {
-  const set = new Set([clean(city.name), ...city.altName.map(alt => clean(alt).replace(/ *\[[^]*\] */g, "").replace(/[.,\/#!$%\^&\*;:{}=\-_`~(){}\[\]]/g," ").replace(/\s\s+/g, ' ').trim())]);
+  const set = new Set([clean(city.name), ...city.altName.map(alt => clean(alt).replace(/ *\[[^]*\] */g, ""))]);
   acc.set(set, city);
   return acc;
 }, new Map());
 
-module.exports = function (query, onlyOne = false) {
-  const text = clean(query).replace(/[.,\/#!$%\^&\*;:{}=\-_`~(){}\[\]]/g," ").replace(/\s\s+/g, ' ');
+module.exports = function (query) {
+  const text = clean(query);
   const words = text.split(/\s/);
 
-  let results = []
+  const results = [];
   for (let city of citiesMap.keys()) {
     if (city.has(text)) {
       const result = citiesMap.get(city);
-      if (onlyOne) {
-        return result;
-      }
+      result.exactMatch = clean(result.name) == text;
       results.push(result);
     }
   }
@@ -26,14 +24,12 @@ module.exports = function (query, onlyOne = false) {
     const match = words.some(w => city.has(w));
     if (match.length > 0) {
       const result = citiesMap.get(city);
-      if (onlyOne) {
-        return result;
-      }
       results.push(result);
     }
   }
-  results = results.map(({country, ...rest}) => ({country: countryCodes.find(({ISO}) => ISO == country), ...rest}));
-  return onlyOne ? results[0] : results;
+  return results
+    .map(({country, ...rest}) => ({country: countryCodes.find(({ISO}) => ISO == country), ...rest}))
+    .sort((a,b) => (b.exactMatch - a.exactMatch) || (b.population - a.population));
 }
 
-// module.exports("amalfi")
+// module.exports("saint etienne");
