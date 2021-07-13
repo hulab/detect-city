@@ -22,7 +22,7 @@ module.exports = function (query) {
   }
   for (let city of citiesMap.keys()) {
     const match = words.some(w => city.has(w));
-    if (match.length > 0) {
+    if (match) {
       const result = citiesMap.get(city);
       results.push(result);
     }
@@ -32,4 +32,4 @@ module.exports = function (query) {
     .sort((a,b) => (b.exactMatch - a.exactMatch) || (b.population - a.population));
 }
 
-// module.exports("saint etienne");
+// module.exports("paris 19");
