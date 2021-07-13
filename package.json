@@ -1,6 +1,6 @@
 {
   "name": "detect-city",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,6 @@
   "author": "Hulab <contact@hulab.co>",
   "license": "ISC",
   "dependencies": {
-    "all-the-cities": "github:hulab/all-the-cities#3.1.2"
+    "all-the-cities": "git+https://github.com/hulab/all-the-cities#3.1.2"
   }
 }
