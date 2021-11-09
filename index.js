@@ -17,6 +17,8 @@ module.exports = function (query) {
     if (city.has(text)) {
       const result = citiesMap.get(city);
       result.exactMatch = clean(result.name) == text;
+      result.otherWords = undefined;
+      result.matchName = text.split(/\s/).map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(' ');
       results.push(result);
     }
   }
@@ -24,10 +26,13 @@ module.exports = function (query) {
     const match = words.some(w => city.has(w));
     if (match) {
       const result = citiesMap.get(city);
-      result.exactMatch = words.includes(clean(result.name));
-      if (!results.some(res => res.cityId == result.cityId)) {
-        results.push(result);
+      if (results.some(res => res.cityId == result.cityId)) {
+        continue;
       }
+      result.exactMatch = false; //words.includes(clean(result.name));
+      result.otherWords = words.filter(w => !city.has(w));
+      result.matchName = words.find(w => city.has(w)).split(/\s/).map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(' ');
+      results.push(result);
     }
   }
   return results
