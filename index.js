@@ -10,7 +10,7 @@ const citiesMap = cities.reduce((acc, city) => {
 
 module.exports = function (query) {
   const text = clean(query);
-  const words = text.split(/\s/);
+  const words = text.split(/\s/).slice(0,10);
   const results = [];
 
   for (let city of citiesMap.keys()) {
