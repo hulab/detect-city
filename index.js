@@ -19,7 +19,7 @@ module.exports = function (query) {
 
   
   if (citiesMap.has(text)) {
-    const cities = citiesMap.get(city);
+    const cities = citiesMap.get(text);
     cities.forEach((result) => {
       result.exactMatch = clean(result.name) == text;
       result.matchPercent = 100;
